@@ -2,6 +2,7 @@
 <section name="Workbench">
 	<section name="MavenProjectImportWizardPage">
 		<list key="rootDirectory">
+			<item value="C:\Users\rafae\OneDrive\Documentos\JAVA\EstoqueALIS-Microservices\User-Service"/>
 			<item value="C:\Users\rafae\Documents\projetos\EstoqueALIS-Microservices\Report-service"/>
 			<item value="C:\Users\rafae\Documents\projetos\EstoqueALIS-Microservices\Product-Service"/>
 			<item value="C:\Users\rafae\Documents\projetos\EstoqueALIS-Microservices\Notificarion-service"/>
