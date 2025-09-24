@@ -1,9 +1,9 @@
 package br.com.rafaelblomer.controllers;
 
 import br.com.rafaelblomer.business.ProdutoService;
-import br.com.rafaelblomer.business.dtoss.ProdutoAtualizacaoDTO;
-import br.com.rafaelblomer.business.dtoss.ProdutoCadastroDTO;
-import br.com.rafaelblomer.business.dtoss.ProdutoResponseDTO;
+import br.com.rafaelblomer.business.dtos.ProdutoAtualizacaoDTO;
+import br.com.rafaelblomer.business.dtos.ProdutoCadastroDTO;
+import br.com.rafaelblomer.business.dtos.ProdutoResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

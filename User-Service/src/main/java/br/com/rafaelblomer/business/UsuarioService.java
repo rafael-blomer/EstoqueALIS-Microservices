@@ -78,7 +78,7 @@ public class UsuarioService {
         tokenRepository.save(verificacaoTokenUsuario);
         TokenVerificacaoEvent event = new TokenVerificacaoEvent(tokenString, entity.getId(), entity.getEmail());
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ROUTING_KEY_TOKEN, event);
-        return converter.entityParaResponseDTO(entity, buscarEstoqueDTO(entity.getId()));
+        return converter.entityParaResponseDTO(entity, List.of());
     }
 
 
@@ -94,7 +94,7 @@ public class UsuarioService {
         validarTelefone(antigo.getId(), novo.telefone());
         atualizarDadosUsuario(antigo, novo);
         repository.save(antigo);
-        return converter.entityParaResponseDTO(antigo, buscarEstoqueDTO(antigo.getId()));
+        return converter.entityParaResponseDTO(antigo, buscarEstoqueDTO(token));
     }
 
     /**
@@ -131,7 +131,7 @@ public class UsuarioService {
      */
     public UsuarioResponseDTO buscarUsuarioDTOToken(String token) {
         Usuario usuario = findByToken(token);
-        return converter.entityParaResponseDTO(usuario, buscarEstoqueDTO(usuario.getId()));
+        return converter.entityParaResponseDTO(usuario, buscarEstoqueDTO(token));
     }
 
 
@@ -251,11 +251,11 @@ public class UsuarioService {
     
     /**
      * Busca os estoques do usuário no Inventory-service
-     * @param idUsuario = id do usuário
+     * @param token = token de sessão do usuário
      * @return retorna a lista dos estoques do usuário
      * TODO: fazer retornar apenas os estoques ativos
      */
-    private List<EstoqueResponseDTO> buscarEstoqueDTO(Long idUsuario) {
-    	return estoqueClient.getEstoquesByUsuario(idUsuario);
+    private List<EstoqueResponseDTO> buscarEstoqueDTO(String token) {
+    	return estoqueClient.getEstoquesByUsuario(token);
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import br.com.rafaelblomer.business.dtos.UsuarioResponseDTO;
 
-@FeignClient(name = "estoque-service", url = "http://localhost:8081/usuario")
+@FeignClient(name = "user-service", url = "http://localhost:8081/usuario")
 public interface UsuarioClient {
 		
 	@GetMapping

@@ -21,6 +21,7 @@ public class ProdutoConverter {
                 produto.getNome(),
                 produto.getMarca(),
                 produto.getDescricao(),
-                produto.getQuantidadeTotal());
+                produto.getQuantidadeTotal(),
+                produto.getIdEstoque());
     }
 }

@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import br.com.rafaelblomer.business.dtos.EstoqueResponseDTO;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(name = "inventory-service", path = "/estoques")
 public interface EstoqueClient {
 
-    @GetMapping("/usuario/{usuarioId}")
-    List<EstoqueResponseDTO> getEstoquesByUsuario(@PathVariable Long usuarioId);
+    @GetMapping("/usuario")
+    List<EstoqueResponseDTO> getEstoquesByUsuario(@RequestHeader("Authorization") String token);
 }

@@ -10,7 +10,7 @@ import br.com.rafaelblomer.infrastructure.entities.Produto;
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
-    List<Produto> findByEstoqueUsuarioId(Long usuarioId);
+    List<Produto> findByIdEstoqueIn(List<Long> idsEstoques);
 
     List<Produto> findByEstoqueId(Long estoqueId);
 }
