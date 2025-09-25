@@ -3,6 +3,8 @@ package br.com.rafaelblomer.business;
 import java.time.LocalDate;
 import java.util.List;
 
+import br.com.rafaelblomer.infrastructure.config.RabbitMQConfig;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,6 @@ import br.com.rafaelblomer.business.exceptions.ObjetoInativoException;
 import br.com.rafaelblomer.business.exceptions.ObjetoNaoEncontradoException;
 import br.com.rafaelblomer.infrastructure.entities.LoteProduto;
 import br.com.rafaelblomer.infrastructure.entities.Produto;
-import br.com.rafaelblomer.infrastructure.event.LoteCriadoEvent;
 import br.com.rafaelblomer.infrastructure.repositories.LoteProdutoRepository;
 
 @Service
@@ -29,13 +30,13 @@ public class LoteProdutoService {
 	private ProdutoService produtoService;
 
 	@Autowired
-	private UsuarioService usuarioService;
-
-	@Autowired
 	private ApplicationEventPublisher publisher;
 
 	@Autowired
 	private LoteProdutoConverter converter;
+
+	@Autowired
+	private RabbitTemplate rabbitTemplate;
 
 	/**
 	 * Cadastra um novo lote de produto. Valida os dados recebidos, verifica se o
@@ -57,8 +58,9 @@ public class LoteProdutoService {
 		produtoService.verificarProdutoAtivo(produto);
 		LoteProduto loteProduto = converter.dtoParaLoteProdutoEntity(dto, produto);
 		repository.save(loteProduto);
-		publisher.publishEvent(new LoteCriadoEvent(loteProduto));
-		return converter.paraLoteProdutoDTO(loteProduto);
+		LoteProdutoResponseDTO response = converter.paraLoteProdutoDTO(loteProduto);
+		rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY, response);
+		return response;
 	}
 
 	// ÚTEIS
