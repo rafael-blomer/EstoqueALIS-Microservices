@@ -41,6 +41,10 @@ public class UsuarioService {
         return null;
     }
 
+    public String verificarEmailUsuario(String token) {
+        return null;
+    }
+
     public String UsuarioEsqueceuSenha(String email) {
         return null;
     }
