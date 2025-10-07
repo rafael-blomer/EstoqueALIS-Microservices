@@ -44,7 +44,7 @@ public class UsuarioController {
         return ResponseEntity.ok().body(usuarioService.atualizarUsuario(atualizacaoUsuarioDTO, token));
     }
 
-    @GetMapping("/verificaemail")
+    @GetMapping("/verificaremail")
     public ResponseEntity<String> verificarEmailUsuario(@RequestParam("token") String token) {
         return ResponseEntity.ok().body(usuarioService.verificarEmailUsuario(token));
     }
