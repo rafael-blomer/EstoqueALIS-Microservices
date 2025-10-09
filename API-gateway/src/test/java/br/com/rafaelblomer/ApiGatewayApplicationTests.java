@@ -1,4 +1,4 @@
-package br.com.rafaelblomer.API_gateway;
+package br.com.rafaelblomer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

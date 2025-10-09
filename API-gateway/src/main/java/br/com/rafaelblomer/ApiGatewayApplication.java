@@ -1,4 +1,4 @@
-package br.com.rafaelblomer.API_gateway;
+package br.com.rafaelblomer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
