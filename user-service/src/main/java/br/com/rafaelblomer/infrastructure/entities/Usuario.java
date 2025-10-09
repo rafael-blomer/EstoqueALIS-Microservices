@@ -12,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name = "TB_USUARIO")
-@Data
 public class Usuario {
 
     @Id
