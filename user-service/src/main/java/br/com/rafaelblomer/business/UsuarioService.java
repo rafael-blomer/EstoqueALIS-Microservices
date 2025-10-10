@@ -13,8 +13,11 @@ import br.com.rafaelblomer.infrastructure.entities.Usuario;
 import br.com.rafaelblomer.infrastructure.entities.VerificacaoTokenUsuario;
 import br.com.rafaelblomer.infrastructure.repositories.UsuarioRepository;
 import br.com.rafaelblomer.infrastructure.repositories.VerificacaoTokenUsuarioRepository;
-import br.com.rafaelblomer.infrastructure.security.JwtUtil;
+import br.com.rafaelblomer.infrastructure.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,13 +35,13 @@ public class UsuarioService {
     private UsuarioConverter usuarioConverter;
 
     @Autowired
-    private VerificacaoTokenUsuarioRepository verificacaoRepository;
-
-    @Autowired
     private VerificacaoTokenUsuarioRepository tokenRepository;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Autowired
     private PasswordEncoder encoder;
@@ -46,6 +49,7 @@ public class UsuarioService {
     public ResponseUsuarioDTO criarUsuario(CadastroUsuarioDTO cadastro) {
         Usuario usuario = usuarioConverter.paraUsuarioEntidade(cadastro);
         usuario.setSenha(encoder.encode(usuario.getSenha()));
+        usuario.setAtivo(false);
         usuarioRepository.save(usuario);
         String tokenString = UUID.randomUUID().toString();
         VerificacaoTokenUsuario verificacaoTokenUsuario = VerificacaoTokenUsuario.criarComExpiracao(tokenString, usuario);
@@ -55,7 +59,9 @@ public class UsuarioService {
     }
 
     public String logarUsuario(LoginUsuarioDTO loginUsuarioDTO) {
-        return null;
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginUsuarioDTO.email(), loginUsuarioDTO.senha()));
+        return jwtService.generateToken(authentication);
     }
 
     public ResponseUsuarioDTO atualizarUsuario(AtualizacaoUsuarioDTO atualizacaoUsuarioDTO, String token) {
@@ -94,7 +100,7 @@ public class UsuarioService {
     //MÉTODOS UTILITÁRIOS
 
     private Usuario buscarUsuarioEntityPorToken(String token) {
-        String email = jwtUtil.extrairEmailToken(token.substring(7));
+        String email = jwtService.extrairEmailToken(token.substring(7));
         return usuarioRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
     }
 
