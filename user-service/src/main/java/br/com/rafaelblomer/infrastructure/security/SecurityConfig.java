@@ -40,11 +40,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/user-service/cadastro",
-                                "/user-service/login",
-                                "/user-service/verificaremail",
-                                "/user-service/esquecisenha",
-                                "/user-service/alterarsenha"
+                                "/cadastro",
+                                "/login",
+                                "/verificaremail",
+                                "/esquecisenha",
+                                "/alterarsenha"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
