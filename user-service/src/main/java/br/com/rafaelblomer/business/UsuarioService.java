@@ -81,8 +81,8 @@ public class UsuarioService {
     public void desativarUsuario(String token) {
         Usuario entity = buscarUsuarioEntityPorToken(token);
         entity.setAtivo(false);
-        //Disparar mensagem RabbitMQ
         usuarioRepository.save(entity);
+        usuarioProducer.publicarMensagemExclusaoUsuario(entity.getId());
     }
 
     public ResponseUsuarioDTO buscarUsuarioDTOPorToken(String token) {

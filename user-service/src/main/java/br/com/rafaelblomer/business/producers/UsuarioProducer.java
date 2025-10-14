@@ -12,11 +12,14 @@ public class UsuarioProducer {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @Value(value = "${broker.queue.email.name}")
+    @Value(value = "${broker.queue.email.verificacao}")
     private String routingKeyVerificacao;
 
     @Value(value = "${broker.queue.email.trocasenha}")
     private String routingKeyTrocaSenha;
+
+    @Value(value = "${broker.queue.exclusao}")
+    private String routingKeyExclusao;
 
     public void publicarMensagemEmailConfirmacao(PublicacaoEmailDTO publicacaoEmailDTO) {
         rabbitTemplate.convertAndSend(routingKeyVerificacao, publicacaoEmailDTO);
@@ -24,5 +27,9 @@ public class UsuarioProducer {
 
     public void publicarMensagemTrocaSenha(PublicacaoEmailDTO publicacaoEmailDTO) {
         rabbitTemplate.convertAndSend(routingKeyTrocaSenha, publicacaoEmailDTO);
+    }
+
+    public void publicarMensagemExclusaoUsuario(Long userId) {
+        rabbitTemplate.convertAndSend(routingKeyExclusao, userId);
     }
 }

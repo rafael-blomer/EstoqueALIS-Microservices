@@ -13,7 +13,7 @@ public class EmailConsumer {
     @Autowired
     private EmailService emailService;
 
-    @RabbitListener(queues = "${broker.queue.email.name}")
+    @RabbitListener(queues = "${broker.queue.email.verificacao}")
     public void emailVerificacaoQueue(@Payload DadosEmailDTO emailDTO) {
         emailService.enviarEmailVerificacao(emailDTO);
     }

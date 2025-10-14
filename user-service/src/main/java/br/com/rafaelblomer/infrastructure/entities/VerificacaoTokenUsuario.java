@@ -18,7 +18,7 @@ public class VerificacaoTokenUsuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String token;
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")
     private Usuario user;
     private LocalDateTime expiryDate;
