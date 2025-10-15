@@ -7,5 +7,5 @@ public record ResponseUsuarioDTO(Long idUsuario,
                                  String email,
                                  String telefone,
                                  String cnpj,
-                                 List<Integer> idsEstoques) {
+                                 List<Long> idsEstoques) {
 }

@@ -4,8 +4,11 @@ import br.com.rafaelblomer.business.converters.ProdutoConverter;
 import br.com.rafaelblomer.business.dtos.ProdutoAtualizacaoDTO;
 import br.com.rafaelblomer.business.dtos.ProdutoCadastroDTO;
 import br.com.rafaelblomer.business.dtos.ProdutoResponseDTO;
+import br.com.rafaelblomer.business.dtos.UsuarioDTO;
+import br.com.rafaelblomer.business.exceptions.AcaoNaoPermitidaException;
 import br.com.rafaelblomer.business.exceptions.ObjetoInativoException;
 import br.com.rafaelblomer.business.exceptions.ObjetoNaoEncontradoException;
+import br.com.rafaelblomer.infrastructure.client.UsuarioClient;
 import br.com.rafaelblomer.infrastructure.entities.Produto;
 import br.com.rafaelblomer.infrastructure.repositories.ProdutoRepository;
 import jakarta.validation.Valid;
@@ -23,8 +26,14 @@ public class ProdutoService {
     @Autowired
     private ProdutoConverter converter;
 
+    @Autowired
+    private UsuarioClient usuarioClient;
 
-    public ProdutoResponseDTO criarProduto(@Valid ProdutoCadastroDTO dto, String token) {
+
+    public ProdutoResponseDTO criarProduto(@Valid ProdutoCadastroDTO cadastroDto, String token) {
+        UsuarioDTO usuario = buscarUserToken(token);
+        
+        Produto produto = converter.cadastroParaProdutoEntity(cadastroDto);
         return null;
     }
 
@@ -58,12 +67,19 @@ public class ProdutoService {
             throw new ObjetoInativoException("O produto foi desativado.");
     }
 
-    private void verificarPermissaoProdutoUsuario() {
-
+    private void verificarPermissaoProdutoUsuario(UsuarioDTO usuario, Produto produto) {
+        boolean permitido = usuario.idsEstoques().stream()
+                .anyMatch(idEstoque -> idEstoque.equals(produto.getIdEstoque()));
+        if (!permitido)
+            throw new AcaoNaoPermitidaException("Você não tem permissão para realizar essa ação.");
     }
 
-    private void verificarPermissaoEstoqueUsuario() {
-
+    private void verificarPermissaoEstoqueUsuario(UsuarioDTO usuario, Long estoqueId) {
+        for (Long ids : usuario.idsEstoques()) {
+            if (estoqueId.equals(ids))
+                return;
+        }
+        throw new AcaoNaoPermitidaException("Você não tem permissão para realizar essa ação.");
     }
 
     private void atualizarDadosProduto(Produto antigo, ProdutoAtualizacaoDTO novo) {
@@ -73,6 +89,10 @@ public class ProdutoService {
             antigo.setMarca(novo.marca());
         if (novo.descricao() != null)
             antigo.setDescricao((novo.descricao()));
+    }
+
+    private UsuarioDTO buscarUserToken(String token) {
+        return usuarioClient.buscarUsuarioPorToken(token).orElseThrow(() -> new ObjetoNaoEncontradoException("Usuário não encontrado"));
     }
 
     public void desativarProdutosDeEstoque() {
