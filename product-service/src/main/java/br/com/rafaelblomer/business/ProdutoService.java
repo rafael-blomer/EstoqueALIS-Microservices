@@ -32,7 +32,7 @@ public class ProdutoService {
 
     public ProdutoResponseDTO criarProduto(@Valid ProdutoCadastroDTO cadastroDto, String token) {
         UsuarioDTO usuario = buscarUserToken(token);
-        //verificarPermissaoEstoqueUsuario(usuario, cadastroDto.idEstoque());
+        verificarPermissaoEstoqueUsuario(usuario, cadastroDto.idEstoque());
         //Fazer verificação de estoque ativo
         System.out.println(usuario.nome());
         Produto produto = converter.cadastroParaProdutoEntity(cadastroDto);
@@ -40,28 +40,49 @@ public class ProdutoService {
         return converter.entityParaResponseDTO(produto, 0);
     }
 
-    public ProdutoResponseDTO atualizarProduto(Long id, ProdutoAtualizacaoDTO dto, String token) {
-        return null;
+    public ProdutoResponseDTO atualizarProduto(Long idProduto, ProdutoAtualizacaoDTO dto, String token) {
+        Produto produtoAntigo = buscarProdutoEntityId(idProduto);
+        verificarProdutoAtivo(produtoAntigo);
+        //verificarEstoqueAtivo
+        UsuarioDTO usuario = buscarUserToken(token);
+        verificarPermissaoProdutoUsuario(usuario, produtoAntigo);
+        atualizarDadosProduto(produtoAntigo, dto);
+        return converter.entityParaResponseDTO(repository.save(produtoAntigo), 0);
     }
 
-    public ProdutoResponseDTO buscarProdutoPorId(Long id, String token) {
-        return null;
+    public ProdutoResponseDTO buscarProdutoPorId(Long produtoId, String token) {
+        Produto produto = buscarProdutoEntityId(produtoId);
+        UsuarioDTO usuario = buscarUserToken(token);
+        verificarPermissaoProdutoUsuario(usuario, produto);
+        return converter.entityParaResponseDTO(produto, 0);
     }
 
     public List<ProdutoResponseDTO> buscarTodosProdutosUsuario(String token) {
-        return null;
+        UsuarioDTO usuario = buscarUserToken(token);
+        List<Produto> listProductEntity = repository.findByIdEstoqueIn(usuario.idsEstoques());
+        return listProductEntity.stream().map(produtoEntity -> converter.entityParaResponseDTO(produtoEntity, 0)).toList();
     }
 
-    public List<ProdutoResponseDTO> buscarTodosProdutosEstoque(Long id, String token) {
-        return null;
+    public List<ProdutoResponseDTO> buscarTodosProdutosEstoque(Long estoqueId, String token) {
+        UsuarioDTO usuario = buscarUserToken(token);
+        verificarPermissaoEstoqueUsuario(usuario, estoqueId);
+        return repository.findByIdEstoque(estoqueId).stream()
+                .map(produtoEntity -> converter.entityParaResponseDTO(produtoEntity, 0))
+                .toList();
     }
 
-    public void desativarProduto(Long id, String token) {
+    public void desativarProduto(Long produtoId, String token) {
+        UsuarioDTO usuario = buscarUserToken(token);
+        Produto produto = buscarProdutoEntityId(produtoId);
+        verificarProdutoAtivo(produto);
+        verificarPermissaoProdutoUsuario(usuario, produto);
+        produto.setAtivo(false);
+        repository.save(produto);
     }
 
     //MÉTODOS UTILITÁRIOS
 
-    private Produto buscarProtudoEntityId(Long id) {
+    private Produto buscarProdutoEntityId(Long id) {
         return repository.findById(id).orElseThrow(() -> new ObjetoNaoEncontradoException("Produto não encontrado"));
     }
 
