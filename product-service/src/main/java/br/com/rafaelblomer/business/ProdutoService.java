@@ -32,9 +32,12 @@ public class ProdutoService {
 
     public ProdutoResponseDTO criarProduto(@Valid ProdutoCadastroDTO cadastroDto, String token) {
         UsuarioDTO usuario = buscarUserToken(token);
-        
+        //verificarPermissaoEstoqueUsuario(usuario, cadastroDto.idEstoque());
+        //Fazer verificação de estoque ativo
+        System.out.println(usuario.nome());
         Produto produto = converter.cadastroParaProdutoEntity(cadastroDto);
-        return null;
+        repository.save(produto);
+        return converter.entityParaResponseDTO(produto, 0);
     }
 
     public ProdutoResponseDTO atualizarProduto(Long id, ProdutoAtualizacaoDTO dto, String token) {

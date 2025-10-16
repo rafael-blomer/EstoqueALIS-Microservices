@@ -67,7 +67,7 @@ public class UsuarioService {
         verificarUsuarioAtivo(usuario);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginUsuarioDTO.email(), loginUsuarioDTO.senha()));
-        return "Bearer" + jwtService.generateToken(authentication);
+        return "Bearer " + jwtService.generateToken(authentication);
     }
 
     public ResponseUsuarioDTO atualizarUsuario(AtualizacaoUsuarioDTO atualizacaoUsuarioDTO, String token) {

@@ -11,5 +11,5 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
     //List<Produto> findByEstoqueUsuarioId(Long usuarioId);
 
-    List<Produto> findByEstoqueId(Long estoqueId);
+    //List<Produto> findByEstoqueId(Long estoqueId);
 }
